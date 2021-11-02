@@ -18,7 +18,7 @@ me = VkQuery(vk_token)
 def photos_get():
     method_name = 'photos.get'
     resp = me.make_query(method_name, 'album_id=profile')
-    pprint(resp.json())
+    me.take_photo_url()
 
 
 def users_get():
@@ -27,11 +27,12 @@ def users_get():
 
 
 def upload():
-    yan_loader.upload_file_to_ya_drive('Education/xxx', r'C:\Users\yurab\Git\Another dev.txt')
-
+    yan_loader.upload_file_to_ya_drive('Education/Vk/photo', r'C:\Users\yurab\Downloads\Ot4SMBuobRk.jpg')
 
 def make_folder():
     print(yan_loader.create_folder_on_drive('Education/Vk'))
 
+
 if __name__ == '__main__':
     photos_get()
+    upload()

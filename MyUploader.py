@@ -31,5 +31,5 @@ class MyUploader:
     def upload_file_to_ya_drive(self, path_on_drive: str, file_path: str):
         response = self.get_upload_link(path_on_drive=path_on_drive)
         url = response.get('href')
-        up = requests.put(url=url, data=open(file=file_path, mode='rb'))
+        up = requests.post(url=url, data=open(file=file_path, mode='rb'))
         print(up.status_code)
