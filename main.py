@@ -1,6 +1,7 @@
 from MyUploader import MyUploader
 from VK_API import VkQuery
 from pprint import pprint
+import urllib.request
 
 
 with open('YandexToken.txt', encoding='utf8') as f:
@@ -12,13 +13,14 @@ with open('VK_id.txt', encoding='utf8') as vk_file:
     vk_serv_key = vk_file.readline().strip()
 
 yan_loader = MyUploader(yan_token)
-me = VkQuery(vk_token)
+me = VkQuery(vk_serv_key)
 
 
 def photos_get():
     method_name = 'photos.get'
-    resp = me.make_query(method_name, 'album_id=profile')
+    resp = me.make_query(method_name, f'owner_id={my_id}&album_id=profile')
     me.take_photo_url()
+    pprint(resp.json())
 
 
 def users_get():
@@ -27,7 +29,8 @@ def users_get():
 
 
 def upload():
-    yan_loader.upload_file_to_ya_drive('Education/Vk/photo', r'C:\Users\yurab\Downloads\Ot4SMBuobRk.jpg')
+    yan_loader.upload_from_url('Education/Vk/photo.png', me.take_photo_url())
+
 
 def make_folder():
     print(yan_loader.create_folder_on_drive('Education/Vk'))
