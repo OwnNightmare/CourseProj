@@ -1,4 +1,4 @@
-from MyUploader import MyUploader
+from Yandex_API import MyUploader
 from VK_API import VkQuery
 from pprint import pprint
 import urllib.request
