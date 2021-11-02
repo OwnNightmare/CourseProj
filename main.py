@@ -20,7 +20,7 @@ def photos_get():
     method_name = 'photos.get'
     resp = me.make_query(method_name, f'owner_id={my_id}&album_id=profile')
     me.take_photo_url()
-    pprint(resp.json())
+    return resp.json()
 
 
 def users_get():
@@ -38,4 +38,5 @@ def make_folder():
 
 if __name__ == '__main__':
     photos_get()
-    upload()
+    print('')
+    print(me.take_photo_url())
