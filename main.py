@@ -30,7 +30,10 @@ def users_get():
 
 
 def upload():
-    yan_loader.upload_from_url('Education/Vk/photo.png', '....')
+    pic_pack = me.store_pictures()
+    for pic_data in pic_pack:
+        for pic_name, pic_url in pic_data.items():
+            yan_loader.upload_from_url(f'Education/Vk/{pic_name}.png', pic_url)
 
 
 def make_folder():
@@ -38,8 +41,8 @@ def make_folder():
 
 
 if __name__ == '__main__':
-    pprint(photos_get())
+    photos_get()
+    upload()
     print('')
-    pprint(me.store_pictures())
-    me.dump()
+
 

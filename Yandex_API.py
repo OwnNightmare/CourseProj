@@ -22,10 +22,10 @@ class MyUploader:
         response = requests.put(url=f'{self.common_url}{self.create_folder_url}', params=params, headers=headers)
         return response
 
-    def upload_from_url(self, path_on_drive: str, url_file: str):
+    def upload_from_url(self, path_on_drive: str, url_path: str):
         params = {
             'path': {path_on_drive},
-            'url': {url_file}
+            'url': {url_path}
         }
         r = requests.post(self.upload_url, params=params, headers=self.get_headers())
         print(r)
