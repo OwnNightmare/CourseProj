@@ -71,7 +71,21 @@
             "width": 576
           }
         ],
-        "text": ""
+        "text": "",
+        "likes": {
+          "user_likes": 0,
+          "count": 45
+        },
+        "reposts": {
+          "count": 0
+        },
+        "comments": {
+          "count": 2
+        },
+        "can_comment": 0,
+        "tags": {
+          "count": 0
+        }
       },
       {
         "album_id": -6,
@@ -142,7 +156,21 @@
             "width": 810
           }
         ],
-        "text": ""
+        "text": "",
+        "likes": {
+          "user_likes": 0,
+          "count": 21
+        },
+        "reposts": {
+          "count": 1
+        },
+        "comments": {
+          "count": 2
+        },
+        "can_comment": 0,
+        "tags": {
+          "count": 0
+        }
       }
     ]
   }

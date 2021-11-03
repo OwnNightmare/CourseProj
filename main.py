@@ -18,8 +18,9 @@ me = VkQuery(vk_serv_key)
 
 def photos_get():
     method_name = 'photos.get'
-    resp = me.make_query(method_name, f'owner_id={my_id}&album_id=profile')
-    me.take_photo_url()
+    params = f'owner_id={my_id}&album_id=profile&extended=1'
+    resp = me.make_query(method_name, params)
+    me.store_pictures()
     return resp.json()
 
 
@@ -29,7 +30,7 @@ def users_get():
 
 
 def upload():
-    yan_loader.upload_from_url('Education/Vk/photo.png', me.take_photo_url())
+    yan_loader.upload_from_url('Education/Vk/photo.png', '....')
 
 
 def make_folder():
@@ -37,6 +38,8 @@ def make_folder():
 
 
 if __name__ == '__main__':
-    photos_get()
+    pprint(photos_get())
     print('')
-    print(me.take_photo_url())
+    pprint(me.store_pictures())
+    me.dump()
+
