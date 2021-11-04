@@ -28,7 +28,7 @@ class MyUploader:
             'url': {url_path}
         }
         r = requests.post(self.upload_url, params=params, headers=self.get_headers())
-        print(r)
+        return r
 
 
 

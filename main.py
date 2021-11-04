@@ -1,5 +1,9 @@
 from Yandex_API import MyUploader
 from VK_API import VkQuery
+from tqdm import tqdm
+import tkinter as tk
+import tkinter.ttk as ttk
+from time import sleep
 from pprint import pprint
 import urllib.request
 
@@ -30,10 +34,17 @@ def users_get():
 
 
 def upload():
+    response = 'response code'
+    dumping_data = []
     pic_pack = me.store_pictures()
     for pic_data in pic_pack:
-        for pic_name, pic_url in pic_data.items():
-            yan_loader.upload_from_url(f'Education/Vk/{pic_name}.png', pic_url)
+        response = yan_loader.upload_from_url(f'Education/Vk/{pic_data.get("likes")}.png', pic_data.get('url'))
+        if response.status_code == 202:
+            dumping_data.append({'file_name': f"{pic_data.get('likes')}.png",
+                                 'size': pic_data.get('size')
+                                 })
+            me.dump('files_description.json', dumping_data)
+    return response.status_code
 
 
 def make_folder():
@@ -42,7 +53,8 @@ def make_folder():
 
 if __name__ == '__main__':
     photos_get()
-    upload()
+    pprint(me.store_pictures())
     print('')
+    print((upload()) == 202)
 
 

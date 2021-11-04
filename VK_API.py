@@ -15,15 +15,16 @@ class VkQuery:
         self.response = resp.json()
         return resp
 
-    def dump(self):
+    def dump(self, file, data, opening_mode='w'):
         if self.response:
-            with open('note.json', mode='w') as f:
-                json.dump(self.response, f, ensure_ascii=False, indent=2)
+            with open(file=file, mode=opening_mode) as f:
+                json.dump(data, f, ensure_ascii=False, indent=2)
 
     def store_pictures(self):
         if self.response != {}:
             items = self.response['response']['items']  # Список фото всех размеров,элемент списка - 1 фото в n размерах
             pictures_store = []
+            photo_data = {}
             photo_url = 'some url'
             for item in items:   # item - словарь для одного фото с x числом размеров(словарей внутри ключа 'sizes')
                 likes_count = item['likes'].get('count')
@@ -32,8 +33,10 @@ class VkQuery:
                     if photo_data.get('height') + photo_data.get('width') > max_resolution:
                         photo_url = photo_data.get('url')
                         max_resolution = photo_data.get('height') + photo_data.get('width')
-                pictures_store.append({f'{likes_count}': photo_url})
+                pictures_store.append({'url': photo_url,
+                                       'size': f"{photo_data.get('height')}x{photo_data.get('width')}",
+                                       'likes': likes_count
+                                       })
             return pictures_store
         else:
             return 'Возможно, метод photos.get не был применен'
-
