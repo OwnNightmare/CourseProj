@@ -56,7 +56,7 @@ def upload_and_dump():
 
 def get_and_upload_photos(vk_id=my_id):
     making_vk_query(owner_id=vk_id)
-    pprint(vk_client.take_biggest_ones())
+    pprint(vk_client.define_photo_numbers())
     # print(upload_and_dump())
 
 

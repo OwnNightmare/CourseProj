@@ -46,12 +46,10 @@ class VkQuery:
             print('Не получен от ВК АPI')
             return False
 
-    def take_biggest_ones(self, quantity=5):
-        if self.store_pictures():
-            store = self.store_pictures()
-            for i in range(0, len(list(store))+1):
-                store.sort(key=operator.itemgetter('pixels'), reverse=True)
-                break
-        pprint(store[0:quantity])
+    def define_photo_numbers(self, quantity=5):
+        common_store = self.store_pictures()
+        if common_store:
+            common_store.sort(key=operator.itemgetter('pixels'), reverse=True)
+        pprint(common_store[0:quantity])
 
 
