@@ -4,8 +4,9 @@ import json
 
 
 class VkQuery:
-    def __init__(self, token):
+    def __init__(self, token, page_id):
         self.token = token
+        self.page_id = page_id
         self.version = '5.131.'
         self.url_main = 'https://api.vk.com/method'
         self.response = {}
