@@ -23,21 +23,24 @@ class VkQuery:
 
     def store_pictures(self):
         if self.response != {}:
-            items = self.response['response']['items']  # Список фото всех размеров,элемент списка - 1 фото в n размерах
-            pictures_store = []
-            photo_data = {}
-            photo_url = 'some url'
-            for item in items:   # item - словарь для одного фото с x числом размеров(словарей внутри ключа 'sizes')
-                likes_count = item['likes'].get('count')
-                max_resolution = 0
-                for photo_data in item['sizes']:   # словарь, с данными о каждом размере фото
-                    if photo_data.get('height') + photo_data.get('width') > max_resolution:
-                        photo_url = photo_data.get('url')
-                        max_resolution = photo_data.get('height') + photo_data.get('width')
-                pictures_store.append({'url': photo_url,
-                                       'size': f"{photo_data.get('height')}x{photo_data.get('width')}",
-                                       'likes': likes_count
-                                       })
-            return pictures_store
+            try:
+                items = self.response['response']['items']  # Список фото всех размеров,элемент списка - 1 фото в n размерах
+                pictures_store = []
+                photo_data = {}
+                photo_url = 'some url'
+                for item in items:   # item - словарь для одного фото с x числом размеров(словарей внутри ключа 'sizes')
+                    likes_count = item['likes'].get('count')
+                    max_resolution = 0
+                    for photo_data in item['sizes']:   # словарь, с данными о каждом размере фото
+                        if photo_data.get('height') + photo_data.get('width') > max_resolution:
+                            photo_url = photo_data.get('url')
+                            max_resolution = photo_data.get('height') + photo_data.get('width')
+                    pictures_store.append({'url': photo_url,
+                                           'size': f"{photo_data.get('height')}x{photo_data.get('width')}",
+                                           'likes': likes_count
+                                           })
+                return pictures_store
+            except KeyError:
+                print(self.response)
         else:
             return 'Возможно, метод photos.get не был применен'
