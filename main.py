@@ -42,6 +42,7 @@ def upload_and_dump():
     response = 'response code'
     dumping_data = []
     pic_pack = vk_client.store_pictures()
+    pprint(pic_pack)
     for pic_data in pic_pack:
         response = yandex_client.upload_from_url(f'Education/Vk/{pic_data.get("likes")}.png', pic_data.get('url'))
         sleep(2.0)
@@ -55,7 +56,8 @@ def upload_and_dump():
 
 def get_and_upload_photos(vk_id=my_id):
     making_vk_query(owner_id=vk_id)
-    print(upload_and_dump())
+    pprint(vk_client.take_biggest_ones())
+    # print(upload_and_dump())
 
 
 def make_folder():

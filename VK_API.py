@@ -1,7 +1,7 @@
 import requests
 from pprint import pprint
 import json
-
+import operator
 
 class VkQuery:
     def __init__(self, token, page_id):
@@ -37,10 +37,21 @@ class VkQuery:
                             max_resolution = photo_data.get('height') + photo_data.get('width')
                     pictures_store.append({'url': photo_url,
                                            'size': f"{photo_data.get('height')}x{photo_data.get('width')}",
-                                           'likes': likes_count
-                                           })
+                                           'likes': likes_count,
+                                           'pixels': photo_data.get('height') + photo_data.get('width')})
                 return pictures_store
             except KeyError:
                 print(self.response)
         else:
-            return 'Возможно, метод photos.get не был применен'
+            print('Не получен от ВК АPI')
+            return False
+
+    def take_biggest_ones(self, quantity=5):
+        if self.store_pictures():
+            store = self.store_pictures()
+            for i in range(0, len(list(store))+1):
+                store.sort(key=operator.itemgetter('pixels'), reverse=True)
+                break
+        pprint(store[0:quantity])
+
+
