@@ -41,9 +41,7 @@ def users_get():
 def upload_and_dump(data):
     response = 'response code'
     dumping_data = []
-    pic_pack = vk_client.store_pictures()
-    pprint(pic_pack)
-    for pic_data in pic_pack:
+    for pic_data in data:
         response = yandex_client.upload_from_url(f'Education/Vk/{pic_data.get("likes")}.png', pic_data.get('url'))
         sleep(2.0)
         if response.status_code == 202:
@@ -62,17 +60,17 @@ def get_and_upload_photos(vk_id=my_id):
         if mode == 'все':
             print(upload_and_dump(store))
         elif mode == 'задать':
-            quantity = int(input('Количество загружаемых фото: '))
+            quantity = int(input(f'Количество загружаемых фото({len(store)} - max): '))
             photos = vk_client.define_photo_numbers(quantity)
             if photos:
-                upload_and_dump(photos)
+                print(upload_and_dump(photos))
 
 
 def make_folder():
     print(yandex_client.create_folder_on_drive('Education/Vk'))
 
 
-if __name__ == '__main__':
+if __name__ == ' __main__':
     way = input('New or Old: ').lower()
     if way == 'new':
         user_vk_id, user_yandex_token = taking_user()
