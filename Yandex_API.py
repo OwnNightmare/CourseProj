@@ -20,7 +20,7 @@ class MyUploader:
         headers = self.get_headers()
         params = {'path': path_on_drive}
         response = requests.put(url=f'{self.common_url}{self.create_folder_url}', params=params, headers=headers)
-        return response
+        return response.status_code
 
     def upload_from_url(self, path_on_drive: str, url_path: str):
         params = {

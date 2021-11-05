@@ -9,6 +9,12 @@ from pprint import pprint
 import urllib.request
 
 
+def taking_user():
+    _vk_id = input('ВК ID: ')
+    _yandex_token = input('Яндекс Диск токен: ')
+    return _vk_id, _yandex_token
+
+
 with open('YandexToken.txt', encoding='utf8') as f:
     yan_token = f.read()
 with open('VK_id.txt', encoding='utf8') as vk_file:
@@ -16,12 +22,6 @@ with open('VK_id.txt', encoding='utf8') as vk_file:
     pattern_for_vk_query = vk_file.readline()
     my_id = vk_file.readline().strip()
     vk_serv_key = vk_file.readline().strip()
-
-
-def taking_user():
-    _vk_id = input('ВК ID: ')
-    _yandex_token = input('Яндекс Диск токен: ')
-    return _vk_id, _yandex_token
 
 
 def get_request(method='photos.get', params='default&params', owner_id=my_id):
@@ -37,8 +37,8 @@ def upload_and_dump(data):
     response = 'response code'
     dumping_data = []
     for pic_data in data:
-        response = yandex_client.upload_from_url(f'Education/Vk/{pic_data.get("likes")}.png', pic_data.get('url'))
-        sleep(2.0)
+        response = yandex_client.upload_from_url(f'VK/{pic_data.get("likes")}.png', pic_data.get('url'))
+        sleep(.01)
         if response.status_code == 202:
             dumping_data.append({'file_name': f"{pic_data.get('likes')}.png",
                                  'size': pic_data.get('size')
@@ -68,15 +68,16 @@ def users_get():
 
 
 def make_folder():
-    print(yandex_client.create_folder_on_drive('Education/Vk'))
+    response = (yandex_client.create_folder_on_drive('VK'))
 
 
-if __name__ == ' __main__':
+if __name__ == '__main__':
     way = input('New or Old: ').lower()
     if way == 'new':
         user_vk_id, user_yandex_token = taking_user()
         yandex_client = MyUploader(yan_token)
         vk_client = VkQuery(vk_serv_key, user_vk_id)
+        make_folder()
         get_and_upload_photos(user_vk_id)
     else:
         yandex_client = MyUploader(yan_token)
