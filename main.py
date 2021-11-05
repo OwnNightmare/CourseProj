@@ -9,12 +9,6 @@ from pprint import pprint
 import urllib.request
 
 
-def taking_user():
-    _vk_id = input('ВК ID: ')
-    _yandex_token = input('Яндекс Диск токен: ')
-    return _vk_id, _yandex_token
-
-
 with open('YandexToken.txt', encoding='utf8') as f:
     yan_token = f.read()
 with open('VK_id.txt', encoding='utf8') as vk_file:
@@ -24,18 +18,19 @@ with open('VK_id.txt', encoding='utf8') as vk_file:
     vk_serv_key = vk_file.readline().strip()
 
 
-def making_vk_query(method='photos.get', params='default&params', owner_id=my_id):
+def taking_user():
+    _vk_id = input('ВК ID: ')
+    _yandex_token = input('Яндекс Диск токен: ')
+    return _vk_id, _yandex_token
+
+
+def get_request(method='photos.get', params='default&params', owner_id=my_id):
     if params == 'default&params' and method == 'photos.get':
         params = f'owner_id={owner_id}&album_id=profile&extended=1'
         resp = vk_client.make_query('photos.get', params)
     else:
         resp = vk_client.make_query(method, params)
     return resp.json()
-
-
-def users_get():
-    method_name = 'users.get'
-    vk_client.make_query(method_name, f'user_ids={my_id},{161370588}, {97799937}')
 
 
 def upload_and_dump(data):
@@ -53,7 +48,7 @@ def upload_and_dump(data):
 
 
 def get_and_upload_photos(vk_id=my_id):
-    making_vk_query(owner_id=vk_id)
+    get_request(owner_id=vk_id)
     store = vk_client.store_pictures()
     if store:
         mode = input('Скачать все доступные фото("все") ---- Задать количество вручную("задать")').lower()
@@ -64,6 +59,12 @@ def get_and_upload_photos(vk_id=my_id):
             photos = vk_client.define_photo_numbers(quantity)
             if photos:
                 print(upload_and_dump(photos))
+
+
+def users_get():
+    method_name = 'users.get'
+    response = vk_client.make_query(method_name, f'user_ids={my_id},{161370588}, {97799937}')
+    return response
 
 
 def make_folder():
@@ -81,6 +82,3 @@ if __name__ == ' __main__':
         yandex_client = MyUploader(yan_token)
         vk_client = VkQuery(vk_serv_key, my_id)
         get_and_upload_photos()
-
-
-
