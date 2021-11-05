@@ -1,6 +1,6 @@
 import time
-from Yandex_API import MyUploader
-from VK_API import VkQuery
+from Yandex_module import YandexLoader
+from VK_module import VkQuery
 from tqdm import tqdm
 import tkinter as tk
 import tkinter.ttk as ttk
@@ -75,11 +75,11 @@ if __name__ == '__main__':
     way = input('New or Old: ').lower()
     if way == 'new':
         user_vk_id, user_yandex_token = taking_user()
-        yandex_client = MyUploader(yan_token)
+        yandex_client = YandexLoader(yan_token)
         vk_client = VkQuery(vk_serv_key, user_vk_id)
         make_folder()
         get_and_upload_photos(user_vk_id)
     else:
-        yandex_client = MyUploader(yan_token)
+        yandex_client = YandexLoader(yan_token)
         vk_client = VkQuery(vk_serv_key, my_id)
         get_and_upload_photos()

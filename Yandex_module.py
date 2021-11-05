@@ -3,7 +3,7 @@ from pprint import pprint
 import webbrowser
 
 
-class MyUploader:
+class YandexLoader:
     def __init__(self, token: str):
         self.token = token
         self.common_url = 'https://cloud-api.yandex.net'

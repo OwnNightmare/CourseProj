@@ -3,6 +3,7 @@ from pprint import pprint
 import json
 import operator
 
+
 class VkQuery:
     def __init__(self, token, page_id):
         self.token = token
