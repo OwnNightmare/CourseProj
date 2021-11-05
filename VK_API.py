@@ -50,6 +50,9 @@ class VkQuery:
         common_store = self.store_pictures()
         if common_store:
             common_store.sort(key=operator.itemgetter('pixels'), reverse=True)
-        pprint(common_store[0:quantity])
+            if quantity <= len(common_store):
+                return common_store[0:quantity]
+            else:
+                return common_store
 
 

@@ -38,7 +38,7 @@ def users_get():
     vk_client.make_query(method_name, f'user_ids={my_id},{161370588}, {97799937}')
 
 
-def upload_and_dump():
+def upload_and_dump(data):
     response = 'response code'
     dumping_data = []
     pic_pack = vk_client.store_pictures()
@@ -56,8 +56,16 @@ def upload_and_dump():
 
 def get_and_upload_photos(vk_id=my_id):
     making_vk_query(owner_id=vk_id)
-    pprint(vk_client.define_photo_numbers())
-    # print(upload_and_dump())
+    store = vk_client.store_pictures()
+    if store:
+        mode = input('Скачать все доступные фото("все") ---- Задать количество вручную("задать")').lower()
+        if mode == 'все':
+            print(upload_and_dump(store))
+        elif mode == 'задать':
+            quantity = int(input('Количество загружаемых фото: '))
+            photos = vk_client.define_photo_numbers(quantity)
+            if photos:
+                upload_and_dump(photos)
 
 
 def make_folder():

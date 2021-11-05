@@ -21,10 +21,10 @@
 #
 # bar.mainloop()
 
-from tqdm import tqdm
-from time import sleep
-
-for i in tqdm(range(100), desc='Blowjob', ):
-    sleep(.01)
-
-
+# d = {'same': 'old', 'x': '99'}
+# z = {'same': 'new', 'y': '88'}
+# w = {'same': 'new+', 'z': '77'}
+# new_d = d | z | w
+# print(new_d)
+i = int(input('*: '))
+print(i)
