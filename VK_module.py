@@ -42,7 +42,7 @@ class VkQuery:
                                            'pixels': photo_data.get('height') + photo_data.get('width')})
                 return pictures_store
             except KeyError:
-                print('ssoosso')
+                print('KeyError')
         else:
             print('Не получен от ВК АPI')
             return False

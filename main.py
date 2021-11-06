@@ -48,18 +48,19 @@ def upload_and_dump(data):
             return False
     response = 'response code'
     dumping_data = []
-    for pic_data in data:
+    for pic_data in tqdm(data, desc='Выгрузка'):
         response = yandex_client.upload_from_url(f'{folder_name}/{pic_data.get("likes")}.png', pic_data.get('url'))
-        sleep(.01)
+        sleep(.05)
         if response.status_code == 202:
             dumping_data.append({'file_name': f"{pic_data.get('likes')}.png",
                                  'size': pic_data.get('size')
                                  })
             vk_client.dump('files_description.json', dumping_data)
+
     return response.status_code
 
 
-def get_and_upload_photos(vk_id=my_id):
+def runner(vk_id=my_id):
     get_request(owner_id=vk_id)
     photos = ''
     store = vk_client.store_pictures()
@@ -96,8 +97,8 @@ if __name__ == '__main__':
         user_vk_id, user_yandex_token = taking_user()
         yandex_client = YandexLoader(yan_token)
         vk_client = VkQuery(vk_serv_key, user_vk_id)
-        get_and_upload_photos(user_vk_id)
+        runner(user_vk_id)
     else:
         yandex_client = YandexLoader(yan_token)
         vk_client = VkQuery(vk_serv_key, my_id)
-        (get_and_upload_photos())
+        (runner())
