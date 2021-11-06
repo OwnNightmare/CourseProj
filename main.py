@@ -46,7 +46,7 @@ def upload_and_dump(data):
             print(f'{folder_name} уже существует(код {resp_folder}). Выберите другое имя или путь')
         else:
             print(f'Ошибка. Папка не создана. Код - {resp_folder}')
-            return False
+            return 'operation canceled'
     response = 'response code'
     dumping_data = []
     for pic_data in tqdm(data, desc='Выгрузка'):
@@ -66,17 +66,19 @@ def runner(vk_id=my_id):
     photos = ''
     store = vk_client.store_pictures()
     if store:
-        mode = input('Скачать все доступные фото("все") ---- Задать количество вручную("задать")').lower()
+        print('Фото ВК профиля получены')
+        mode = input('Загрузить все доступные фото("все") ---- Задать количество вручную("задать")').lower()
         if mode == 'все':
             print(upload_and_dump(store))
         elif mode == 'задать':
             try:
                 quantity = int(input(f'Количество загружаемых фото({len(store)} - max): '))
-                photos = vk_client.define_photo_numbers(quantity)
             except ValueError:
                 print('Заданное значение не является числом')
+            else:
+                photos = vk_client.define_photo_numbers(photo_store=store, quantity=quantity)
         else:
-            photos = vk_client.define_photo_numbers()
+            photos = vk_client.define_photo_numbers(photo_store=store)
         if photos:
             print(f'Выгрузка завершена - {upload_and_dump(photos)}')
 

@@ -47,13 +47,12 @@ class VkQuery:
             print('Не получен от ВК АPI')
             return False
 
-    def define_photo_numbers(self, quantity=5):
-        common_store = self.store_pictures()
-        if common_store:
-            common_store.sort(key=operator.itemgetter('pixels'), reverse=True)
-            if quantity <= len(common_store):
-                return common_store[0:quantity]
+    def define_photo_numbers(self, photo_store, quantity=5):
+        if photo_store:
+            photo_store.sort(key=operator.itemgetter('pixels'), reverse=True)
+            if quantity <= len(photo_store):
+                return photo_store[0:quantity]
             else:
-                return common_store
+                return photo_store
 
 
