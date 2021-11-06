@@ -35,9 +35,10 @@ def get_request(method='photos.get', params='default&params', owner_id=my_id):
 
 def upload_and_dump(data):
     print('Создаем новую папку, куда будут загружены все фото(по умолчанию будет создана в корне Я.Диска)')
-    folder_name = input('Имя папки на Я.Диске: ')
     resp_folder = 0
+    folder_name = 'VK'
     while resp_folder != 201:
+        folder_name = input('Имя папки на Я.Диске: ')
         resp_folder = make_folder(folder_name)
         if resp_folder == 201:
             print(f'Папка {folder_name} успешно создана (код {resp_folder})')
