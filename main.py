@@ -34,10 +34,22 @@ def get_request(method='photos.get', params='default&params', owner_id=my_id):
 
 
 def upload_and_dump(data):
+    print('Создаем новую папку, куда будут загружены все фото(по умолчанию будет создана в корне Я.Диска)')
+    folder_name = input('Имя папки на Я.Диске: ')
+    resp_folder = 0
+    while resp_folder != 201:
+        resp_folder = make_folder(folder_name)
+        if resp_folder == 201:
+            print(f'Папка {folder_name} успешно создана (код {resp_folder})')
+        elif resp_folder == 409:
+            print(f'{folder_name} уже существует(код {resp_folder}). Выберите другое имя или путь')
+        else:
+            print(f'Ошибка. Папка не создана. Код - {resp_folder}')
+            return False
     response = 'response code'
     dumping_data = []
     for pic_data in data:
-        response = yandex_client.upload_from_url(f'VK/{pic_data.get("likes")}.png', pic_data.get('url'))
+        response = yandex_client.upload_from_url(f'{folder_name}/{pic_data.get("likes")}.png', pic_data.get('url'))
         sleep(.01)
         if response.status_code == 202:
             dumping_data.append({'file_name': f"{pic_data.get('likes')}.png",
@@ -49,16 +61,22 @@ def upload_and_dump(data):
 
 def get_and_upload_photos(vk_id=my_id):
     get_request(owner_id=vk_id)
+    photos = ''
     store = vk_client.store_pictures()
     if store:
         mode = input('Скачать все доступные фото("все") ---- Задать количество вручную("задать")').lower()
         if mode == 'все':
             print(upload_and_dump(store))
         elif mode == 'задать':
-            quantity = int(input(f'Количество загружаемых фото({len(store)} - max): '))
-            photos = vk_client.define_photo_numbers(quantity)
-            if photos:
-                print(upload_and_dump(photos))
+            try:
+                quantity = int(input(f'Количество загружаемых фото({len(store)} - max): '))
+                photos = vk_client.define_photo_numbers(quantity)
+            except ValueError:
+                print('Заданное значение не является числом')
+        else:
+            photos = vk_client.define_photo_numbers()
+        if photos:
+            print(f'Выгрузка завершена - {upload_and_dump(photos)}')
 
 
 def users_get():
@@ -67,8 +85,9 @@ def users_get():
     return response
 
 
-def make_folder():
-    response = (yandex_client.create_folder_on_drive('VK'))
+def make_folder(folder_name):
+    response = (yandex_client.create_folder_on_drive(folder_name))
+    return response
 
 
 if __name__ == '__main__':
@@ -77,9 +96,8 @@ if __name__ == '__main__':
         user_vk_id, user_yandex_token = taking_user()
         yandex_client = YandexLoader(yan_token)
         vk_client = VkQuery(vk_serv_key, user_vk_id)
-        make_folder()
         get_and_upload_photos(user_vk_id)
     else:
         yandex_client = YandexLoader(yan_token)
         vk_client = VkQuery(vk_serv_key, my_id)
-        get_and_upload_photos()
+        (get_and_upload_photos())
