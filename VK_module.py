@@ -4,11 +4,11 @@ import json
 import operator
 
 
-class VkQuery:
-    def __init__(self, token, page_id):
+class VkClient:
+    def __init__(self, token, page_id, version='5.131.'):
         self.token = token
         self.page_id = page_id
-        self.version = '5.131.'
+        self.version = version
         self.url_main = 'https://api.vk.com/method'
         self.response = {}
 
@@ -42,7 +42,7 @@ class VkQuery:
                                            'pixels': photo_data.get('height') + photo_data.get('width')})
                 return pictures_store
             except KeyError:
-                print('KeyError')
+                pprint(self.response)
         else:
             print('Не получен от ВК АPI')
             return False

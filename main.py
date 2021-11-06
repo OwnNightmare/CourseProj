@@ -1,12 +1,8 @@
-import time
-from Yandex_module import YandexLoader
-from VK_module import VkQuery
+from Yandex_module import YandexClient
+from VK_module import VkClient
 from tqdm import tqdm
-import tkinter as tk
-import tkinter.ttk as ttk
 from time import sleep
 from pprint import pprint
-import urllib.request
 
 
 def taking_user():
@@ -67,7 +63,7 @@ def runner(vk_id=my_id):
     store = vk_client.store_pictures()
     if store:
         print('Фото ВК профиля получены')
-        mode = input('Загрузить все доступные фото("все") ---- Задать количество вручную("задать")').lower()
+        mode = input('Загрузить все доступные фото("все") ---- Задать количество вручную("задать"): ').lower()
         if mode == 'все':
             print(upload_and_dump(store))
         elif mode == 'задать':
@@ -85,7 +81,7 @@ def runner(vk_id=my_id):
 
 def users_get():
     method_name = 'users.get'
-    response = vk_client.make_query(method_name, f'user_ids={my_id},{161370588}, {97799937}')
+    response = vk_client.make_query(method_name, f'user_ids={my_id},{161370588}, {97799937}, h0odrich')
     return response
 
 
@@ -95,13 +91,13 @@ def make_folder(folder_name):
 
 
 if __name__ == '__main__':
-    way = input('New or Old: ').lower()
-    if way == 'new':
+    way = input('Admin or User: ').lower()
+    if way == 'user':
         user_vk_id, user_yandex_token = taking_user()
-        yandex_client = YandexLoader(yan_token)
-        vk_client = VkQuery(vk_serv_key, user_vk_id)
+        yandex_client = YandexClient(yan_token)
+        vk_client = VkClient(vk_serv_key, user_vk_id)
         runner(user_vk_id)
     else:
-        yandex_client = YandexLoader(yan_token)
-        vk_client = VkQuery(vk_serv_key, my_id)
+        yandex_client = YandexClient(yan_token)
+        vk_client = VkClient(vk_serv_key, my_id)
         (runner())
