@@ -28,14 +28,14 @@ def make_folder(folder_name):
 def photos_get(owner_id=my_id):
     params = f'owner_id={owner_id}&album_id=profile&extended=1'
     resp = vk_client.make_query('photos.get', params)
-    print(resp.status_code)
     return resp.json()
 
 
 def upload_and_dump(data):
-    print('Создаем новую папку, куда будут загружены все фото(по умолчанию будет создана в корне Я.Диска)')
+    print('Создаем папку, куда будут загружены все фото(по умолчанию будет создана в корне Я.Диска)')
     resp_folder = 0
-    folder_name = 'VK'
+    response_photo = 0
+    folder_name = 'VK_photos'
     while resp_folder != 201:
         folder_name = input('Имя папки на Я.Диске: ')
         resp_folder = make_folder(folder_name)
@@ -48,15 +48,14 @@ def upload_and_dump(data):
             return 'operation canceled'
     dumping_data = []
     for pic_data in tqdm(data, desc='Загрузка на Я.Диск'):
-        response = yandex_client.upload_from_url(f'{folder_name}/{pic_data.get("likes")}.png', pic_data.get('url'))
+        response_photo = yandex_client.upload_from_url(f'{folder_name}/{pic_data.get("likes")}.png', pic_data.get('url'))
         sleep(.05)
-        if response.status_code == 202:
+        if response_photo.status_code == 202:
             dumping_data.append({'file_name': f"{pic_data.get('likes')}.png",
                                  'size': pic_data.get('size')
                                  })
             vk_client.dump('files_description.json', dumping_data)
-
-    return response.status_code
+    return response_photo.status_code
 
 
 def runner(vk_id):
@@ -102,6 +101,7 @@ if __name__ == '__main__':
         user_vk_id = get_true_id(user_data)
         runner(user_vk_id)
     else:
+        print(vk_serv_key)
         yandex_client = YandexClient(yan_token)
         vk_client = VkClient(vk_serv_key)
         (runner(my_id))
