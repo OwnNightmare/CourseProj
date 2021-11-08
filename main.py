@@ -6,18 +6,18 @@ from pprint import pprint
 
 
 def taking_user():
-    _vk_id = input('ВК ID: ')
-    _yandex_token = input('Яндекс Диск токен: ')
-    return _vk_id, _yandex_token
+    vk_id = input('ВК ID: ')
+    yandex_token = input('Яндекс Диск токен: ')
+    return vk_id, yandex_token
 
 
 with open('YandexToken.txt', encoding='utf8') as f:
     yan_token = f.read()
 with open('VK_id.txt', encoding='utf8') as vk_file:
+    vk_serv_key = vk_file.readline().strip()
     vk_token = vk_file.readline().strip()
     pattern_for_vk_query = vk_file.readline()
     my_id = vk_file.readline().strip()
-    vk_serv_key = vk_file.readline().strip()
 
 
 def make_folder(folder_name):
@@ -25,12 +25,10 @@ def make_folder(folder_name):
     return response
 
 
-def photos_get(method='photos.get', params='default&params', owner_id=my_id):
-    if params == 'default&params' and method == 'photos.get':
-        params = f'owner_id={owner_id}&album_id=profile&extended=1'
-        resp = vk_client.make_query('photos.get', params)
-    else:
-        resp = vk_client.make_query(method, params)
+def photos_get(owner_id=my_id):
+    params = f'owner_id={owner_id}&album_id=profile&extended=1'
+    resp = vk_client.make_query('photos.get', params)
+    print(resp.status_code)
     return resp.json()
 
 
@@ -49,7 +47,7 @@ def upload_and_dump(data):
             print(f'Ошибка. Папка не создана. Код - {resp_folder}')
             return 'operation canceled'
     dumping_data = []
-    for pic_data in tqdm(data, desc='Выгрузка'):
+    for pic_data in tqdm(data, desc='Загрузка на Я.Диск'):
         response = yandex_client.upload_from_url(f'{folder_name}/{pic_data.get("likes")}.png', pic_data.get('url'))
         sleep(.05)
         if response.status_code == 202:
@@ -63,24 +61,24 @@ def upload_and_dump(data):
 
 def runner(vk_id):
     photos_get(owner_id=vk_id)
-    photos = ''
-    pic_store = vk_client.store_pictures()
-    if pic_store:
+    photo_store = vk_client.store_pictures()
+    sorted_photos = []
+    if photo_store:
         print('Фото ВК профиля получены')
         mode = input('Загрузить все доступные фото("все") ---- Задать количество вручную("задать"): ').lower()
         if mode == 'все':
-            print(upload_and_dump(pic_store))
+            (upload_and_dump(photo_store))
         elif mode == 'задать':
             try:
-                quantity = int(input(f'Количество загружаемых фото({len(pic_store)} - max): '))
+                quantity = int(input(f'Количество загружаемых фото({len(photo_store)} - max): '))
             except ValueError:
                 print('Заданное значение не является числом')
             else:
-                photos = vk_client.define_photo_numbers(photo_store=pic_store, quantity=quantity)
+                sorted_photos = vk_client.define_photo_numbers(photo_store=photo_store, quantity=quantity)
         else:
-            photos = vk_client.define_photo_numbers(photo_store=pic_store)
-        if photos:
-            print(f'Выгрузка завершена - {upload_and_dump(photos)}')
+            sorted_photos = vk_client.define_photo_numbers(photo_store=photo_store)
+        if sorted_photos:
+            (upload_and_dump(sorted_photos))
 
 
 def users_get():
