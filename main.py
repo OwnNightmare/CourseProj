@@ -81,20 +81,27 @@ def runner(vk_id):
             (upload_and_dump(sorted_photos))
 
 
-def users_get():
+def users_get(user_ids):
     method_name = 'users.get'
-    response = vk_client.make_query(method_name, f'user_ids={my_id},{161370588}, {97799937}, h0odrich')
-    return response
+    response = vk_client.make_query(method_name, f'user_ids={user_ids}')
+    return response.json()
+
+
+def get_true_id(users_data):
+    true_id = users_data['response'][0].get('id')
+    return true_id
 
 
 if __name__ == '__main__':
     way = input('Admin or User: ').lower()
     if way == 'user':
         user_vk_id, user_yandex_token = taking_user()
-        yandex_client = YandexClient(yan_token)
-        vk_client = VkClient(vk_serv_key, user_vk_id)
+        yandex_client = YandexClient(token=yan_token)
+        vk_client = VkClient(token=vk_serv_key)
+        user_data = (users_get(user_ids=user_vk_id))
+        user_vk_id = get_true_id(user_data)
         runner(user_vk_id)
     else:
         yandex_client = YandexClient(yan_token)
-        vk_client = VkClient(vk_serv_key, my_id)
+        vk_client = VkClient(vk_serv_key)
         (runner(my_id))

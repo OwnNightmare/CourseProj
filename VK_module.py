@@ -5,9 +5,8 @@ import operator
 
 
 class VkClient:
-    def __init__(self, token, page_id, version='5.131.'):
+    def __init__(self, token, version='5.131.'):
         self.token = token
-        self.page_id = page_id
         self.version = version
         self.url_main = 'https://api.vk.com/method'
         self.response = {}
