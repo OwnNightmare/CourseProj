@@ -2,7 +2,6 @@ from Yandex_module import YandexClient
 from VK_module import VkClient
 from tqdm import tqdm
 from time import sleep
-from pprint import pprint
 
 
 def taking_user():
@@ -17,9 +16,11 @@ with open('YandexToken.txt', encoding='utf8') as f:
     yan_token = f.read()
 with open('VK_id.txt', encoding='utf8') as vk_file:
     vk_serv_key = vk_file.readline().strip()
+    nethol_token = vk_file.readline().strip()
     vk_token = vk_file.readline().strip()
     pattern_for_vk_query = vk_file.readline()
     my_id = vk_file.readline().strip()
+    korovin_id = vk_file.readline().strip()
 
 
 def make_folder(folder_name):
@@ -111,11 +112,13 @@ if __name__ == '__main__':
     if author == 'user':
         user_vk_id, user_yandex_token = taking_user()
         yandex_client = YandexClient(token=user_yandex_token)
-        vk_client = VkClient(token=vk_serv_key)
+        vk_client = VkClient(token=nethol_token)
         user_data = (users_get(user_ids=user_vk_id))
         user_vk_id = get_true_id(user_data)
         runner(user_vk_id)
     elif author == 'admin':
         yandex_client = YandexClient(yan_token)
         vk_client = VkClient(vk_serv_key)
-        (runner(my_id))
+        user_data = (users_get(user_ids=korovin_id))
+        user_vk_id = get_true_id(user_data)
+        (runner(user_vk_id))
