@@ -13,7 +13,7 @@ def taking_user():
 
 
 with open('YandexToken.txt', encoding='utf8') as f:
-    """считанный Я.токен используется в тестовом режиме Admin"""
+    """Считанный Я.токен используется в тестовом режиме Admin"""
     yan_token = f.read()
 with open('VK_id.txt', encoding='utf8') as vk_file:
     vk_serv_key = vk_file.readline().strip()
@@ -106,16 +106,16 @@ def get_true_id(users_data):
 if __name__ == '__main__':
     """Admin - тестовый режим с default данными для проверки функциональности"""
     author = 'some person'
-    while author not in ['admin, user, exit']:
-        author = input('Admin or User: ').lower()
-        if author == 'user':
-            user_vk_id, user_yandex_token = taking_user()
-            yandex_client = YandexClient(token=user_yandex_token)
-            vk_client = VkClient(token=vk_serv_key)
-            user_data = (users_get(user_ids=user_vk_id))
-            user_vk_id = get_true_id(user_data)
-            runner(user_vk_id)
-        elif author == 'admin':
-            yandex_client = YandexClient(yan_token)
-            vk_client = VkClient(vk_serv_key)
-            (runner(my_id))
+    while author not in ['admin', 'user', 'exit']:
+        author = input('Admin or User: ').lower().strip()
+    if author == 'user':
+        user_vk_id, user_yandex_token = taking_user()
+        yandex_client = YandexClient(token=user_yandex_token)
+        vk_client = VkClient(token=vk_serv_key)
+        user_data = (users_get(user_ids=user_vk_id))
+        user_vk_id = get_true_id(user_data)
+        runner(user_vk_id)
+    elif author == 'admin':
+        yandex_client = YandexClient(yan_token)
+        vk_client = VkClient(vk_serv_key)
+        (runner(my_id))
