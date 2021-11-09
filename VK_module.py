@@ -24,7 +24,7 @@ class VkClient:
     def store_pictures(self):
         if self.response != {}:
             try:
-                items = self.response['response']['items']  # Список фото всех размеров,элемент списка - 1 фото в n размерах
+                items = self.response['response']['items']  # Список фото всех size,элемент списка - 1 фото в n size
                 pictures_store = []
                 photo_data = {}
                 photo_url = 'some url'

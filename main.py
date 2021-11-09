@@ -6,12 +6,14 @@ from pprint import pprint
 
 
 def taking_user():
+    """"Принимает от юзера и возвращает id-VK страницы и токен Я.Диска"""
     vk_id = input('ВК ID: ')
     yandex_token = input('Яндекс Диск токен: ')
     return vk_id, yandex_token
 
 
 with open('YandexToken.txt', encoding='utf8') as f:
+    """считанный Я.токен используется в тестовом режиме Admin"""
     yan_token = f.read()
 with open('VK_id.txt', encoding='utf8') as vk_file:
     vk_serv_key = vk_file.readline().strip()
@@ -21,17 +23,22 @@ with open('VK_id.txt', encoding='utf8') as vk_file:
 
 
 def make_folder(folder_name):
+    """ Принимает имя папки, создаёт папку через метод класса, возращает код-ответ"""
     response = (yandex_client.create_folder_on_drive(folder_name))
     return response
 
 
 def photos_get(owner_id=my_id):
+    """Принимает vk id, формирует одноименный запрос к VK API"""
     params = f'owner_id={owner_id}&album_id=profile&extended=1'
     resp = vk_client.make_query('photos.get', params)
     return resp.json()
 
 
 def upload_and_dump(data):
+    """Принимает название папки на Я.Диске, если папка создана(код 201) загружает в нее фото,
+    выгружает описание загруженных фото в files_description.json"""
+
     print('Создаем папку, куда будут загружены все фото(по умолчанию будет создана в корне Я.Диска)')
     resp_folder = 0
     response_photo = 0
@@ -59,6 +66,9 @@ def upload_and_dump(data):
 
 
 def runner(vk_id):
+    """Принимает id юзера VK, получает фото профиля, если выбрано 'все' - сохраняет каждое фото макс разрешения,
+    загружает на диск, если 'задать' - сортирует по размеру и загружает заданное кол-во фото"""
+
     photos_get(owner_id=vk_id)
     photo_store = vk_client.store_pictures()
     sorted_photos = []
@@ -81,27 +91,31 @@ def runner(vk_id):
 
 
 def users_get(user_ids):
+    """Принимает ВК-id от юзера(только один),  выполняет запрос users.get, возращает ответ в json"""
     method_name = 'users.get'
     response = vk_client.make_query(method_name, f'user_ids={user_ids}')
     return response.json()
 
 
 def get_true_id(users_data):
+    """Принимает резульат запроса users.get, возвращает реальный(числовой) id юзера"""
     true_id = users_data['response'][0].get('id')
     return true_id
 
 
 if __name__ == '__main__':
-    way = input('Admin or User: ').lower()
-    if way == 'user':
-        user_vk_id, user_yandex_token = taking_user()
-        yandex_client = YandexClient(token=yan_token)
-        vk_client = VkClient(token=vk_serv_key)
-        user_data = (users_get(user_ids=user_vk_id))
-        user_vk_id = get_true_id(user_data)
-        runner(user_vk_id)
-    else:
-        print(vk_serv_key)
-        yandex_client = YandexClient(yan_token)
-        vk_client = VkClient(vk_serv_key)
-        (runner(my_id))
+    """Admin - тестовый режим с default данными для проверки функциональности"""
+    author = 'some person'
+    while author not in ['admin, user, exit']:
+        author = input('Admin or User: ').lower()
+        if author == 'user':
+            user_vk_id, user_yandex_token = taking_user()
+            yandex_client = YandexClient(token=user_yandex_token)
+            vk_client = VkClient(token=vk_serv_key)
+            user_data = (users_get(user_ids=user_vk_id))
+            user_vk_id = get_true_id(user_data)
+            runner(user_vk_id)
+        elif author == 'admin':
+            yandex_client = YandexClient(yan_token)
+            vk_client = VkClient(vk_serv_key)
+            (runner(my_id))
