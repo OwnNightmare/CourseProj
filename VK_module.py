@@ -42,23 +42,21 @@ class VkClient:
     def make_query(self, method_name, params=''):
         """Формирует запрос к API ВКонтакте"""
         resp = requests.get(f'{self.url_main}/{method_name}?{params}&access_token={self.token}&v={self.version}')
-        self.response = resp.json()
         return resp
 
     def dump(self, file, data, opening_mode='w'):
         """Выгружает данные в json файл"""
-        if self.response:
-            with open(file=file, mode=opening_mode) as f:
-                json.dump(data, f, ensure_ascii=False, indent=2)
+        with open(file=file, mode=opening_mode) as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
 
-    def store_pictures(self):
+    def store_pictures(self, data):
         """
         Для каждого фото, вернувшегося в ответете на запрос, выбирает вариант с наибольшим  разрешением,
         сохраняет в словарь с данными, описывающими это фото
         """
-        if self.response != {}:
+        if data:
             try:
-                items = self.response['response']['items']  # Список фото всех size,элемент списка - 1 фото в n size
+                items = data['response']['items']  # Список фото всех size,элемент списка - 1 фото в n size
                 pictures_store = []
                 photo_data = {}
                 photo_url = 'some url'
@@ -75,10 +73,10 @@ class VkClient:
                                            'pixels': photo_data.get('height') + photo_data.get('width')})
                 return pictures_store
             except KeyError:
-                pprint(self.response)
+                pprint(data)
         else:
             print('Не получен от ВК АPI')
-            return False
+            return
 
     def define_photo_numbers(self, photo_store, quantity=5):
         """Сортирует фото по разрешению от большего, возвращает заданное количество сначала списка"""

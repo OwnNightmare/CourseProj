@@ -6,7 +6,7 @@ from pprint import pprint
 
 
 def taking_user():
-    """"Принимает от юзера и возвращает id-VK страницы и токен Я.Диска"""
+    """"Принимает от юзера str и возвращает id-VK страницы и токен Я.Диска"""
     vk_id = input('ВК ID: ')
     yandex_token = input('Яндекс Диск токен: ')
     return vk_id, yandex_token
@@ -41,7 +41,7 @@ def upload_and_dump(data):
 
     print('Создаем папку, куда будут загружены все фото(по умолчанию будет создана в корне Я.Диска)')
     resp_folder = 0
-    response_photo = 0
+    upload_resp = 0
     folder_name = 'VK_photos'
     while resp_folder != 201:
         folder_name = input('Имя папки на Я.Диске: ')
@@ -55,22 +55,22 @@ def upload_and_dump(data):
             return 'operation canceled'
     dumping_data = []
     for pic_data in tqdm(data, desc='Загрузка на Я.Диск'):
-        response_photo = yandex_client.upload_from_url(f'{folder_name}/{pic_data.get("likes")}.png', pic_data.get('url'))
+        upload_resp = yandex_client.upload_from_url(f'{folder_name}/{pic_data.get("likes")}.png', pic_data.get('url'))
         sleep(.05)
-        if response_photo.status_code == 202:
+        if upload_resp.status_code == 202:
             dumping_data.append({'file_name': f"{pic_data.get('likes')}.png",
                                  'size': pic_data.get('size')
                                  })
             vk_client.dump('files_description.json', dumping_data)
-    return response_photo.status_code
+    return upload_resp.status_code
 
 
 def runner(vk_id):
     """Принимает id юзера VK, получает фото профиля, если выбрано 'все' - сохраняет каждое фото макс разрешения,
     загружает на диск, если 'задать' - сортирует по размеру и загружает заданное кол-во фото"""
 
-    photos_get(owner_id=vk_id)
-    photo_store = vk_client.store_pictures()
+    photo_response = photos_get(owner_id=vk_id)
+    photo_store = vk_client.store_pictures(photo_response)
     sorted_photos = []
     if photo_store:
         print('Фото ВК профиля получены')
