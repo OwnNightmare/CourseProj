@@ -29,15 +29,18 @@ class VkClient:
 
         Методы
         ------
-        get_headers():
-            возвращает заголовки запроса, передает Я.токен в запросе для аутентификации
+        make_query(method_name, params=''):
+            отправляет запрос, определенный в method_name к API ВКонтанкте
+        dump(file, data, opening_mode='w'):
+            выгружает переданные данные 'data' в файл 'file'
+        store_pictures(data):
+             выбирает экземляр фото макс размера, добавляет в список
         """
     def __init__(self, token, version='5.131.'):
         """Устанавливает необходимые атрибуты для объекта VkClient"""
         self.token = token
         self.version = version
         self.url_main = 'https://api.vk.com/method'
-        self.response = {}
 
     def make_query(self, method_name, params=''):
         """Формирует запрос к API ВКонтакте"""
@@ -76,13 +79,15 @@ class VkClient:
                 pprint(data)
         else:
             print('Не получен от ВК АPI')
-            return
+            return None
 
     def define_photo_numbers(self, photo_store, quantity=5):
-        """Сортирует фото по разрешению от большего, возвращает заданное количество сначала списка"""
-        if photo_store:
-            photo_store.sort(key=operator.itemgetter('pixels'), reverse=True)
-            if quantity <= len(photo_store):
-                return photo_store[0:quantity]
-            else:
-                return photo_store
+        """
+        Сортирует фото по разрешению от большего, возвращает заданное количество сначала списка,
+        если длина списка меньше указзанного значения - возвращает весь список
+        """
+        photo_store.sort(key=operator.itemgetter('pixels'), reverse=True)
+        if quantity <= len(photo_store):
+            return photo_store[0:quantity]
+        else:
+            return photo_store

@@ -28,6 +28,10 @@ class YandexClient:
     ------
     get_headers():
         возвращает заголовки запроса, передает Я.токен в запросе для аутентификации
+    create_folder_on_drive(path_on_drive):
+        создает папку с именем переданным в path_on_drive
+    upload_from_url(path_on_drive, url_path):
+        загружает файл на Я.Диск
     """
 
     def __init__(self, token: str):
@@ -59,18 +63,3 @@ class YandexClient:
         }
         response = requests.post(self.upload_url, params=params, headers=self.get_headers())
         return response
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
