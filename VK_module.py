@@ -15,7 +15,7 @@ import operator
 class VkClient:
     """
         Класс для формирования запросов к API ВКонтакте
-        ...
+
         Атрибуты
         -------
         token : str

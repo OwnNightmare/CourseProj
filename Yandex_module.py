@@ -1,5 +1,4 @@
 import requests
-from pprint import pprint
 
 """
 Классы: YandexClient
@@ -13,7 +12,7 @@ from pprint import pprint
 class YandexClient:
     """
     Класс для формирования запросов к REST API Яндекс Диска
-    ...
+
     Атрибуты
     -------
     token : str
