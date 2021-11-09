@@ -1,3 +1,7 @@
+"""
+Необходимо установить библиотеку tqdm  : pip install tqdm
+"""
+
 from Yandex_module import YandexClient
 from VK_module import VkClient
 from tqdm import tqdm
@@ -5,9 +9,9 @@ from time import sleep
 
 
 def taking_user():
-    """"Принимает от юзера две str и возвращает id-VK страницы и токен Я.Диска"""
-    vk_id = input('ВК ID: ')
-    yandex_token = input('Яндекс Диск токен: ')
+    """"Принимает от пользователя данные и записывает их id-VK страницы и токен Я.Диска переменные"""
+    vk_id = input('ID вашей ВК страницы: ')
+    yandex_token = input('Токен вашего Яндекс Диска: ')
     return vk_id, yandex_token
 
 
@@ -16,7 +20,7 @@ with open('YandexToken.txt', encoding='utf8') as f:
 with open('VK_id.txt', encoding='utf8') as vk_file:
     """Считывает построчно данные из файла VK_id.txt, записывает их в переменные"""
     vk_serv_key = vk_file.readline().strip()
-    nethol_token = vk_file.readline().strip()
+    nethol_vk_token = vk_file.readline().strip()
     vk_token = vk_file.readline().strip()
     pattern_for_vk_query = vk_file.readline()
     my_id = vk_file.readline().strip()
@@ -40,13 +44,11 @@ def photos_get(owner_id=my_id):
 
 
 def upload_and_dump(data):
-
     """
     Принимает имя для папки на Я.Диске, посылает запрос о создании папки с указанным именем,
     если папка создана( получен код 201), то загружает в нее фото,
     выгружает описание загруженных фото в  файл files_description.json
     """
-
     print('Создаем папку, куда будут загружены все фото(по умолчанию будет создана в корне Я.Диска)')
     resp_folder = 0
     upload_resp = 0
@@ -74,34 +76,44 @@ def upload_and_dump(data):
 
 
 def runner(vk_id):
-
-    """Функция является агрегатором функций, последовательно их вызывая, взаимодействует с пользователем.
-    Принимает id юзера VK, получает фото профиля, если выбрано 'все' - сохраняет каждое фото макс разрешения,
-    загружает на диск, если 'задать' - сортирует по размеру и загружает заданное кол-во фото"""
-
+    """
+    Функция является агрегатором функций, последовательно их вызывает, взаимодействует с пользователем.
+    Принимает id пользователя VK
+    Если mode 'все' - сохраняет каждое фото макс разрешения, загружает на диск,
+    если 'задать' - сортирует по размеру и загружает заданное кол-во фото,
+    иначе загружает 5 фото по умолчанию(при наличии)
+    """
     photo_response = photos_get(owner_id=vk_id)
     photo_store = vk_client.store_pictures(photo_response)
     sorted_photos = []
     if photo_store:
-        print('Фото ВК профиля получены')
-        mode = input('Загрузить все доступные фото("все") ---- Задать количество вручную("задать"): ').lower()
+        print(f'Фото ВК профиля получены({len(photo_store)} фото)')
+        mode = input('Загрузить все ("все") <-> Задать количество вручную("задать"): ').lower()
         if mode == 'все':
             (upload_and_dump(photo_store))
         elif mode == 'задать':
-            try:
-                quantity = int(input(f'Количество загружаемых фото({len(photo_store)} - max): '))
-            except ValueError:
-                print('Заданное значение не является числом')
-            else:
-                sorted_photos = vk_client.define_photo_numbers(photo_store=photo_store, quantity=quantity)
+            loop = True
+            while loop:
+                try:
+                    quantity = int(input(f'Количество загружаемых фото: '))
+                except ValueError:
+                    print('Заданное значение не является числом')
+                else:
+                    if quantity > len(photo_store):
+                        print('Альбом меньше заданного числа')
+                    else:
+                        sorted_photos = vk_client.define_photo_numbers(photo_store=photo_store, quantity=quantity)
+                        break
         else:
             sorted_photos = vk_client.define_photo_numbers(photo_store=photo_store)
         if sorted_photos:
             (upload_and_dump(sorted_photos))
+        else:
+            print('Ни одно фото не было загружено')
 
 
 def users_get(user_ids):
-    """Принимает ВК-id от юзера(только один),  выполняет запрос users.get, возращает ответ в json"""
+    """Принимает ВК-id от пользователя (только один),  выполняет запрос users.get, возращает ответ в json"""
     method_name = 'users.get'
     response = vk_client.make_query(method_name, f'user_ids={user_ids}')
     return response.json()
@@ -114,20 +126,21 @@ def get_true_id(users_data):
 
 
 if __name__ == '__main__':
-    """Admin - тестовый режим с default данными для проверки функциональности"""
     author = 'some person'
     while author not in ['admin', 'user', 'exit']:
         author = input('Admin or User: ').lower().strip()
     if author == 'user':
         user_vk_id, user_yandex_token = taking_user()
         yandex_client = YandexClient(token=user_yandex_token)
-        vk_client = VkClient(token=nethol_token)
+        vk_client = VkClient(token=nethol_vk_token)
         user_data = (users_get(user_ids=user_vk_id))
         user_vk_id = get_true_id(user_data)
         runner(user_vk_id)
-    elif author == 'admin':
+    elif author == 'admin':  # Тестовый режим, не выполнится из-за удаленного yan_token
         yandex_client = YandexClient(yan_token)
         vk_client = VkClient(vk_serv_key)
         user_data = (users_get(user_ids=korovin_id))
         user_vk_id = get_true_id(user_data)
         runner(user_vk_id)
+    elif author == 'exit':
+        exit('Выход из программы')
