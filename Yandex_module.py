@@ -1,11 +1,10 @@
 import requests
 from pprint import pprint
-import webbrowser
 
 """
 Классы: YandexClient
 
-Функции: get_headers() -> dict
+Методы: get_headers() -> dict
          create_folder_on_drive(string) -> Response.status_code 
          upload_from_url(str, str) -> Response           
 """
